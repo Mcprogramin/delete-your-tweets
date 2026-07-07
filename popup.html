@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Tweet Cleaner (Merged)</title>
+  <style>
+    /* Global reset for popup */
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: #15202b;
+      width: 380px;
+      padding: 16px;
+      margin: 0;
+      overflow-y: auto;
+      overflow-x: hidden;
+    }
+
+    /* ── Extension A UI ── */
+    #extA-ui {
+      background: #192734;
+      color: #e7e9ea;
+      padding: 16px;
+      border-radius: 8px;
+      font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+      width: 100%;
+    }
+    #extA-ui h1 {
+      font-size: 15px;
+      margin-bottom: 10px;
+    }
+    #extA-ui button {
+      padding: 10px;
+      border: none;
+      border-radius: 6px;
+      font-weight: 700;
+      font-size: 13px;
+      cursor: pointer;
+      background: #1da1f2;
+      color: #fff;
+      width: 100%;
+    }
+    #extA-ui button:hover { opacity: .85; }
+
+    /* ── Extension B UI ── */
+    #extB-ui {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      width: 100%;
+      background: #15202b; /* using body background to blend */
+      color: #e7e9ea;
+    }
+    #extB-ui h2 {
+      font-size: 15px;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+    #extB-ui .desc {
+      font-size: 11px;
+      color: #8899a6;
+      margin-bottom: 14px;
+      line-height: 1.4;
+    }
+    #extB-ui .section {
+      background: #192734;
+      border-radius: 8px;
+      padding: 10px 12px;
+      margin-bottom: 10px;
+    }
+    #extB-ui .section-title {
+      font-size: 11px;
+      font-weight: 600;
+      color: #8899a6;
+      text-transform: uppercase;
+      letter-spacing: .6px;
+      margin-bottom: 8px;
+    }
+    #extB-ui .cb {
+      display: flex;
+      align-items: center;
+      margin-bottom: 6px;
+    }
+    #extB-ui .cb:last-child { margin-bottom: 0; }
+    #extB-ui .cb input[type="checkbox"] {
+      accent-color: #1da1f2;
+      width: 15px;
+      height: 15px;
+      margin-right: 8px;
+      flex-shrink: 0;
+    }
+    #extB-ui .cb label {
+      font-size: 13px;
+      cursor: pointer;
+    }
+    #extB-ui .field { margin-bottom: 8px; }
+    #extB-ui .field:last-child { margin-bottom: 0; }
+    #extB-ui .field label {
+      display: block;
+      font-size: 11px;
+      color: #8899a6;
+      margin-bottom: 3px;
+    }
+    #extB-ui .field input {
+      width: 100%;
+      padding: 7px 8px;
+      background: #253341;
+      border: 1px solid #38444d;
+      border-radius: 5px;
+      color: #e7e9ea;
+      font-size: 12px;
+    }
+    #extB-ui .field input:focus {
+      outline: none;
+      border-color: #1da1f2;
+    }
+    #extB-ui .row { display: flex; gap: 8px; }
+    #extB-ui .row .field { flex: 1; }
+    #extB-ui .btn-row { display: flex; gap: 8px; margin-bottom: 8px; }
+    #extB-ui button {
+      flex: 1;
+      padding: 10px;
+      border: none;
+      border-radius: 6px;
+      font-weight: 700;
+      font-size: 13px;
+      cursor: pointer;
+      transition: opacity .15s;
+    }
+    #extB-ui button:hover { opacity: .85; }
+    #extB-ui button:active { opacity: .7; }
+    #extB-ui #extB-startBtn { background: #1da1f2; color: #fff; }
+    #extB-ui #extB-stopBtn  { background: #e0245e; color: #fff; }
+
+    #extB-ui #extB-idStatus {
+      font-size: 10px;
+      color: #8899a6;
+      padding: 4px 0;
+      margin-bottom: 4px;
+    }
+    #extB-ui #extB-idStatus .ok   { color: #17bf63; }
+    #extB-ui #extB-idStatus .miss { color: #e0245e; }
+
+    #extB-ui #extB-status {
+      background: #192734;
+      border-radius: 6px;
+      padding: 8px;
+      font-size: 11px;
+      font-family: "Cascadia Code", "Consolas", monospace;
+      color: #8899a6;
+      white-space: pre-wrap;
+      word-break: break-word;
+      max-height: 120px;
+      overflow-y: auto;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Extension A UI -->
+  <div id="extA-ui">
+    <h1>Tweet Remover (Basic)</h1>
+    <select id="extA-action" style="width: 100%; padding: 8px; margin-bottom: 10px; border-radius: 6px; border: none; background: #253341; color: #e7e9ea; font-size: 13px; outline: none;">
+      <option value="tweets">Delete Tweets & Replies</option>
+      <option value="retweets">Remove Retweets</option>
+    </select>
+    <div style="display: flex; gap: 8px;">
+      <button id="extA-start-delete">▶ Start Basic Scraper</button>
+      <button id="extA-stop-delete" style="background: #e0245e;">■ Stop</button>
+    </div>
+  </div>
+
+  <hr style="border: 0; border-top: 1px solid #38444d; margin: 16px 0; width: 100%;" />
+
+  <!-- Extension B UI -->
+  <div id="extB-ui">
+    <h2>Tweet Cleaner (Advanced)</h2>
+    <p class="desc">Set your filters, then press <strong>Start</strong> while an x.com tab is active.</p>
+
+    <div class="section">
+      <div class="section-title">What to clean</div>
+      <div class="cb"><input type="checkbox" id="extB_removeLikes"><label for="extB_removeLikes">Remove Likes (un‑like)</label></div>
+      <div class="cb"><input type="checkbox" id="extB_urlOnly"><label for="extB_urlOnly">Only tweets containing URLs</label></div>
+      <div class="cb"><input type="checkbox" id="extB_keepPinned" checked><label for="extB_keepPinned">Keep Pinned Tweet</label></div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">Filters</div>
+      <div class="field">
+        <label for="extB_keywords">Keywords (comma separated)</label>
+        <input type="text" id="extB_keywords" placeholder="e.g. crypto, nft">
+      </div>
+      <div class="row">
+        <div class="field">
+          <label for="extB_afterDate">After date</label>
+          <input type="date" id="extB_afterDate">
+        </div>
+        <div class="field">
+          <label for="extB_beforeDate">Before date</label>
+          <input type="date" id="extB_beforeDate">
+        </div>
+      </div>
+      <div class="field">
+        <label for="extB_ignoreIds">Ignore tweet IDs</label>
+        <input type="text" id="extB_ignoreIds" placeholder="Comma‑separated IDs to skip">
+      </div>
+      <div class="field">
+        <label for="extB_onlyIds">Only these tweet IDs</label>
+        <input type="text" id="extB_onlyIds" placeholder="Leave empty to scan timeline">
+      </div>
+    </div>
+
+
+
+    <div class="btn-row">
+      <button id="extB-startBtn">▶ Start Cleaner</button>
+      <button id="extB-stopBtn">■ Stop</button>
+    </div>
+
+    <div id="extB-idStatus"></div>
+    <div id="extB-dashboard" style="display: flex; justify-content: space-between; background: #192734; border-radius: 6px; padding: 10px; margin-bottom: 8px; font-size: 12px; font-weight: 600;">
+      <div>Tweets Deleted: <span id="stat-tweets" style="color: #17bf63;">0</span></div>
+      <div>Likes Removed: <span id="stat-likes" style="color: #1da1f2;">0</span></div>
+    </div>
+    <div id="extB-status">Ready.</div>
+  </div>
+
+  <hr style="border: 0; border-top: 1px solid #38444d; margin: 16px 0; width: 100%;" />
+
+  <div id="support-ui" style="text-align: center; margin-bottom: 8px;">
+    <p style="font-size: 12px; font-weight: 600; color: #8899a6; margin-bottom: 8px;">❤️ Support the Developer</p>
+    <div style="font-size: 11px; color: #e7e9ea; background: #192734; padding: 10px; border-radius: 6px; text-align: left; user-select: all;">
+      <div style="margin-bottom: 6px;"><strong style="color: #1da1f2;">PayPal:</strong> yasboughi@gmail.com</div>
+      <div><strong style="color: #1da1f2;">TRC20:</strong> THEHtPZ1e2rpAXhbeUzbsiac6iagnHFJct</div>
+    </div>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>
